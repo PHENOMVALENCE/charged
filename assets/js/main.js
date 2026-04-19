@@ -130,9 +130,8 @@
     }
 
     /*
-     * TODO: Integrate with Beehiiv, Mailchimp, ConvertKit, or your API.
-     * Example: POST to /api/subscribe with JSON { email, source: 'charged-site' }
-     * On success: show confirmation; on 4xx/5xx: show statusEl with is-error.
+     * Integration hook: POST to your newsletter provider or API, then update
+     * statusEl based on the response.
      */
     if (statusEl) {
       statusEl.textContent = "You’re on the list. Watch your inbox for the next issue.";

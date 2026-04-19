@@ -1,0 +1,10 @@
+<svg width="1400" height="560" viewBox="0 0 1400 560" xmlns="http://www.w3.org/2000/svg">
+  <rect width="1400" height="560" fill="#FAFAF6"/>
+  <circle cx="200" cy="280" r="120" fill="#D98C00"/>
+  <path d="M222 170 L154 286 L206 286 L178 390 L248 274 L196 274 Z" fill="#FAFAF6"/>
+  <line x1="362" y1="140" x2="362" y2="420" stroke="#1A1A14" stroke-width="1" stroke-opacity="0.12"/>
+  <text x="420" y="224" font-family="'IBM Plex Mono','Courier New',monospace" font-weight="500" font-size="108" letter-spacing="8" fill="#141410">CHARGED</text>
+  <text x="422" y="298" font-family="Georgia,'Times New Roman',serif" font-style="italic" font-size="32" fill="#9A6200">Connecting Africa — where money flows and wheels turn.</text>
+  <line x1="422" y1="326" x2="1330" y2="326" stroke="#D98C00" stroke-width="0.8" stroke-opacity="0.4"/>
+  <text x="422" y="366" font-family="'IBM Plex Mono','Courier New',monospace" font-size="20" letter-spacing="1.5" fill="#9A6200" opacity="0.75">Africa's fintech and e-mobility record. Published every Monday from Dar es Salaam.</text>
+</svg>

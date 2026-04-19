@@ -1,0 +1,11 @@
+<svg width="800" height="800" viewBox="0 0 800 800" xmlns="http://www.w3.org/2000/svg">
+  <rect width="800" height="800" fill="#141410"/>
+  <line x1="0" y1="400" x2="800" y2="400" stroke="#D98C00" stroke-width="0.5" stroke-opacity="0.12"/>
+  <line x1="400" y1="0" x2="400" y2="800" stroke="#D98C00" stroke-width="0.5" stroke-opacity="0.12"/>
+  <circle cx="400" cy="360" r="220" fill="none" stroke="#D98C00" stroke-width="2" stroke-opacity="0.35"/>
+  <circle cx="400" cy="360" r="160" fill="#D98C00"/>
+  <path d="M430 210 L340 380 L400 380 L370 510 L460 340 L400 340 Z" fill="#141410"/>
+  <text x="400" y="648" font-family="'IBM Plex Mono','Courier New',monospace" font-weight="500" font-size="68" letter-spacing="14" text-anchor="middle" fill="#D98C00">CHARGED</text>
+  <line x1="140" y1="684" x2="660" y2="684" stroke="#D98C00" stroke-width="1" stroke-opacity="0.4"/>
+  <text x="400" y="720" font-family="'IBM Plex Mono','Courier New',monospace" font-size="20" letter-spacing="3" text-anchor="middle" fill="#D98C00" opacity="0.55">AFRICA · EST. 2026</text>
+</svg>

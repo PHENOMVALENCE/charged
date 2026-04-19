@@ -1,27 +1,20 @@
-# VaultEdge – Financial & Loan Services Website Template
+# CHARGED
 
-#### Preview
+Static publication website for CHARGED, an African fintech and e-mobility intelligence newsletter.
 
- - [Demo](https://themewagon.github.io/vaultedge/)
+## Pages
 
-#### Download
- - [Download from ThemeWagon](https://themewagon.com/themes/vaultedge/)
+- `index.html` - homepage, hero, subscription form, latest issue, coverage, schedule
+- `archive.html` - issue archive with client-side filtering
+- `article.html` - sample issue template
+- `about.html` - publication positioning
+- `advertise.html` - sponsorship and partner inquiry page
+- `privacy.html` - privacy policy
 
-## Getting Started
+## Assets
 
-1. Clone Repository
-```
-git clone https://github.com/themewagon/vaultedge.git
-```
+The active design system lives in `assets/css/charged.css`, with vanilla JavaScript behavior in `assets/js/main.js`.
 
+## Local Preview
 
-## Author 
-```
-Design and code is completely written by Rabina Vishwakarma and development team. 
-```
-
-## License
-
- - Design and Code is Copyright &copy; <a href="https://github.com/Rabina-Vishwakarma/" target="_blank">Rabina Vishwakarma</a>
- - Licensed cover under [MIT]
- - Distributed by <a href="https://themewagon.com" target="_blank">ThemeWagon</a>
+Open `index.html` directly in a browser, or serve the folder from Apache/XAMPP.

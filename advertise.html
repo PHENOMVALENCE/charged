@@ -66,7 +66,7 @@
             </ol>
           </nav>
           <h1>Advertise &amp; partner</h1>
-          <p class="ch-hero__dek" style="margin:0;">Put your brand in front of people who move capital and fleets across Africa.</p>
+          <p class="ch-page-hero__subline">Reach decision-makers who allocate capital and deploy fleets across Africa.</p>
         </div>
       </header>
 
@@ -87,21 +87,21 @@
             <h2 class="ch-section-title">Ways to work together</h2>
           </header>
           <div class="ch-card-grid ch-card-grid--2">
-            <div class="ch-card ch-card--topic">
-              <h3 class="ch-card__title" style="font-size:1.125rem;">Primary sponsor</h3>
-              <p class="ch-card__excerpt">One brand associated with a weekly edition—logo placement, sponsor line, and optional short message from your team.</p>
+            <div class="ch-card ch-card--topic ch-card--format">
+              <h3>Primary sponsor</h3>
+              <p class="ch-card__excerpt">One brand associated with a weekly edition: logo placement, sponsor line, and optional message from your team.</p>
             </div>
-            <div class="ch-card ch-card--topic">
-              <h3 class="ch-card__title" style="font-size:1.125rem;">Research &amp; briefings</h3>
-              <p class="ch-card__excerpt">Co-produced data slices or mini-briefings on a market theme, clearly marked as supported content.</p>
+            <div class="ch-card ch-card--topic ch-card--format">
+              <h3>Research &amp; briefings</h3>
+              <p class="ch-card__excerpt">Co-produced data slices or briefings on a market theme, clearly marked as supported content.</p>
             </div>
-            <div class="ch-card ch-card--topic">
-              <h3 class="ch-card__title" style="font-size:1.125rem;">Event &amp; launch alignment</h3>
-              <p class="ch-card__excerpt">Timed mentions around conferences, product launches, or policy milestones relevant to readers.</p>
+            <div class="ch-card ch-card--topic ch-card--format">
+              <h3>Event &amp; launch alignment</h3>
+              <p class="ch-card__excerpt">Timed mentions around conferences, launches, or policy milestones relevant to readers.</p>
             </div>
-            <div class="ch-card ch-card--topic">
-              <h3 class="ch-card__title" style="font-size:1.125rem;">Talent &amp; ecosystem</h3>
-              <p class="ch-card__excerpt">High-signal roles and programme announcements for teams building at the fintech–mobility boundary.</p>
+            <div class="ch-card ch-card--topic ch-card--format">
+              <h3>Talent &amp; ecosystem</h3>
+              <p class="ch-card__excerpt">Roles and programme announcements for teams at the fintech–mobility boundary.</p>
             </div>
           </div>
         </div>
@@ -112,27 +112,24 @@
           <div class="ch-subscribe-block">
             <h2 class="ch-section-title">Start a conversation</h2>
             <p class="ch-section-dek">Tell us about your goals, timing, and markets—we’ll respond with a concise options sheet.</p>
-            <p style="margin-top:1.5rem;">
+            <p class="ch-advertise-lead">
               <a class="ch-btn ch-btn--primary" href="mailto:partners@charged.news?subject=CHARGED%20sponsorship">Email partners@charged.news</a>
             </p>
-            <form class="ch-contact-form" id="partner-form" style="margin-top:2rem;" action="#" method="post" novalidate>
-              <!--
-                TODO: Wire to CRM, inbox API, or form backend (Formspree, etc.).
-              -->
+            <form class="ch-contact-form ch-partner-form" id="partner-form" action="mailto:partners@charged.news" method="post" enctype="text/plain">
               <div class="ch-field">
                 <label class="ch-label" for="co-name">Name</label>
                 <input class="ch-input" type="text" id="co-name" name="name" autocomplete="name">
               </div>
-              <div class="ch-field" style="margin-top:1rem;">
+              <div class="ch-field">
                 <label class="ch-label" for="co-email">Work email</label>
                 <input class="ch-input" type="email" id="co-email" name="email" autocomplete="email">
               </div>
-              <div class="ch-field" style="margin-top:1rem;">
+              <div class="ch-field">
                 <label class="ch-label" for="co-msg">What are you looking for?</label>
-                <textarea class="ch-input" id="co-msg" name="message" rows="4" style="resize:vertical;min-height:120px;"></textarea>
+                <textarea class="ch-input" id="co-msg" name="message" rows="4"></textarea>
               </div>
-              <button type="submit" class="ch-btn ch-btn--dark" style="margin-top:1rem;">Send inquiry</button>
-              <p id="partner-form-note" class="ch-field-hint" style="margin-top:0.75rem;">This demo form prevents default submit. Connect your endpoint to go live.</p>
+              <button type="submit" class="ch-btn ch-btn--dark ch-partner-cta">Send inquiry</button>
+              <p id="partner-form-note" class="ch-field-hint ch-partner-form__hint">We reply within two business days.</p>
             </form>
           </div>
         </div>
@@ -171,24 +168,16 @@
           <h2 class="ch-footer__title">Contact</h2>
           <ul class="ch-footer__list">
             <li><a href="mailto:hello@charged.news">hello@charged.news</a></li>
+            <li><span class="ch-footer__location">Dar es Salaam, Tanzania</span></li>
           </ul>
         </div>
       </div>
       <div class="ch-container ch-footer__bottom">
-        <p>© <span id="y"></span> CHARGED.</p>
-        <p class="ch-mono">Advertise</p>
+        <p>© <span id="y"></span> CHARGED. All rights reserved.</p>
       </div>
     </footer>
   </div>
-  <script>
-    document.getElementById("y").textContent = new Date().getFullYear();
-    document.getElementById("partner-form").addEventListener("submit", function (e) {
-      e.preventDefault();
-      var note = document.getElementById("partner-form-note");
-      note.textContent = "Thanks — connect this form to your backend to deliver inquiries.";
-      note.style.color = "var(--ch-ink)";
-    });
-  </script>
+  <script>document.getElementById("y").textContent = new Date().getFullYear();</script>
   <script src="assets/js/main.js" defer></script>
 </body>
 </html>
