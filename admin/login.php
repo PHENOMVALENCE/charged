@@ -79,7 +79,9 @@ require_once __DIR__ . '/../includes/header.php';
       </div>
       <div class="ch-field">
         <label class="ch-label" for="password">Password</label>
-        <input class="ch-input ch-input--login" type="password" id="password" name="password" required autocomplete="current-password" placeholder="••••••••">
+        <div class="ch-password-wrap">
+          <input class="ch-input ch-input--login" type="password" id="password" name="password" required autocomplete="current-password" placeholder="••••••••">
+        </div>
       </div>
       <button type="submit" class="ch-btn ch-btn--primary ch-admin-login__submit">Sign in</button>
     </form>

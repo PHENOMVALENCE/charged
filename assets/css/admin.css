@@ -551,3 +551,61 @@
 .ch-field--editor .tox .tox-edit-area__iframe {
   background-color: var(--ch-surface) !important;
 }
+
+/* ----- Password show / hide (admin profile + login) ----- */
+.ch-password-wrap {
+  display: flex;
+  align-items: stretch;
+  width: 100%;
+  max-width: 100%;
+}
+
+.ch-password-wrap .ch-input {
+  flex: 1 1 auto;
+  min-width: 0;
+  border-radius: var(--ch-radius-sm) 0 0 var(--ch-radius-sm);
+}
+
+.ch-password-wrap__toggle {
+  flex: 0 0 auto;
+  padding: 0 0.85rem;
+  margin: 0;
+  font-size: 0.7rem;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  border: 1px solid var(--ch-border);
+  border-left: none;
+  border-radius: 0 var(--ch-radius-sm) var(--ch-radius-sm) 0;
+  background: var(--ch-surface-2);
+  color: var(--ch-ink-muted);
+  cursor: pointer;
+  line-height: 1.2;
+}
+
+.ch-password-wrap__toggle:hover {
+  color: var(--ch-ink);
+  background: var(--ch-surface);
+}
+
+.ch-password-wrap__toggle:focus-visible {
+  outline: 2px solid var(--ch-accent-bright);
+  outline-offset: 2px;
+  z-index: 1;
+}
+
+.ch-admin-login .ch-password-wrap .ch-input--login {
+  border-radius: var(--ch-radius-sm) 0 0 var(--ch-radius-sm);
+}
+
+.ch-admin-login .ch-password-wrap__toggle {
+  border-radius: 0 var(--ch-radius-sm) var(--ch-radius-sm) 0;
+  background: rgba(255, 255, 255, 0.07);
+  border-color: rgba(255, 255, 255, 0.22);
+  color: rgba(236, 234, 228, 0.85);
+}
+
+.ch-admin-login .ch-password-wrap__toggle:hover {
+  background: rgba(255, 255, 255, 0.12);
+  color: #fff;
+}

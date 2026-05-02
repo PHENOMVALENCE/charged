@@ -74,6 +74,7 @@ function charged_nav_attrs(string $key, string $current, string $aria = 'aria-cu
           <a href="subscribers.php" class="ch-admin-nav-btn ch-admin-nav-btn--newsletter<?php echo $charged_nav === 'admin-subscribers' ? ' is-active' : ''; ?>"<?php echo charged_nav_attrs('admin-subscribers', $charged_nav); ?>>Newsletter</a>
           <a href="form-submissions.php" class="ch-admin-nav-btn ch-admin-nav-btn--forms<?php echo $charged_nav === 'admin-forms' ? ' is-active' : ''; ?>"<?php echo charged_nav_attrs('admin-forms', $charged_nav); ?>>Forms</a>
           <a href="article-create.php"<?php echo charged_nav_attrs('admin-create', $charged_nav); ?>>New</a>
+          <a href="profile.php"<?php echo charged_nav_attrs('admin-profile', $charged_nav); ?>>Profile</a>
           <a href="<?php echo charged_e($prefix); ?>articles.php">View site</a>
           <a href="logout.php">Log out</a>
         </nav>
@@ -123,6 +124,7 @@ function charged_nav_attrs(string $key, string $current, string $aria = 'aria-cu
           <li><a href="subscribers.php" class="ch-admin-nav-btn ch-admin-nav-btn--newsletter<?php echo $charged_nav === 'admin-subscribers' ? ' is-active' : ''; ?>"<?php echo charged_nav_attrs('admin-subscribers', $charged_nav); ?>>Newsletter</a></li>
           <li><a href="form-submissions.php" class="ch-admin-nav-btn ch-admin-nav-btn--forms<?php echo $charged_nav === 'admin-forms' ? ' is-active' : ''; ?>"<?php echo charged_nav_attrs('admin-forms', $charged_nav); ?>>Forms</a></li>
           <li><a href="article-create.php">New article</a></li>
+          <li><a href="profile.php"<?php echo charged_nav_attrs('admin-profile', $charged_nav); ?>>Profile</a></li>
           <li><a href="<?php echo charged_e($prefix); ?>articles.php">View site</a></li>
           <li><a href="logout.php">Log out</a></li>
           <?php else : ?>

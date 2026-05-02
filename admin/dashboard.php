@@ -44,7 +44,7 @@ require_once __DIR__ . '/../includes/header.php';
     <div>
       <p class="ch-eyebrow">Admin</p>
       <h1>Dashboard</h1>
-      <p class="ch-section-dek">Signed in as <?php echo charged_e($_SESSION['admin_email'] ?? ''); ?>.</p>
+      <p class="ch-section-dek">Signed in as <?php echo charged_e($_SESSION['admin_email'] ?? ''); ?> · <a href="profile.php">Account settings</a></p>
     </div>
     <a class="ch-btn ch-btn--primary" href="article-create.php">Create new article</a>
   </div>

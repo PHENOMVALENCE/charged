@@ -66,5 +66,8 @@ $charged_admin_login_href = ($CHARGED_ADMIN || $charged_from_admin_dir) ? 'login
   <script>window.CHARGED_SUBMIT_FORM=<?php echo json_encode(charged_submit_form_web_path(), JSON_UNESCAPED_SLASHES); ?>;</script>
   <script src="<?php echo charged_e($prefix); ?>assets/js/charged-path.js" defer></script>
   <script src="<?php echo charged_e($prefix); ?>assets/js/main.js" defer></script>
+  <?php if ($CHARGED_ADMIN || !empty($charged_login_page)) : ?>
+  <script src="<?php echo charged_e($prefix); ?>assets/js/admin-password-toggle.js" defer></script>
+  <?php endif; ?>
 </body>
 </html>
