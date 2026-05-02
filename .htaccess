@@ -1,0 +1,2 @@
+# Prefer dynamic homepage when present (PHP latest articles).
+DirectoryIndex index.php index.html

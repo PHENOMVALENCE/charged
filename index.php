@@ -1,11 +1,28 @@
-<!DOCTYPE html>
-<html lang="en" data-theme="light">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta http-equiv="X-UA-Compatible" content="IE=edge">
-  <title>CHARGED — Africa fintech &amp; e-mobility intelligence</title>
-  <meta name="description" content="Weekly intelligence on Africa’s fintech and e-mobility sectors. Published from Dar es Salaam. Where fintech meets the electric road across Africa.">
+<?php
+
+declare(strict_types=1);
+
+require_once __DIR__ . '/config/db.php';
+require_once __DIR__ . '/includes/functions.php';
+
+$latestArticles = [];
+try {
+    $st = $pdo->query(
+        "SELECT title, slug, excerpt, featured_image, published_at
+         FROM articles
+         WHERE status = 'published'
+         ORDER BY published_at DESC, id DESC
+         LIMIT 3"
+    );
+    $latestArticles = $st->fetchAll();
+} catch (Throwable $e) {
+    $latestArticles = [];
+}
+
+$charged_page_title = 'CHARGED — Africa fintech & e-mobility intelligence';
+$charged_meta_description = 'Weekly intelligence on Africa’s fintech and e-mobility sectors. Published from Dar es Salaam. Where fintech meets the electric road across Africa.';
+$charged_nav = 'home';
+$charged_extra_head = <<<'HTML'
   <link rel="canonical" href="https://charged.news/">
   <meta property="og:type" content="website">
   <meta property="og:title" content="CHARGED — Africa fintech &amp; e-mobility intelligence">
@@ -15,66 +32,12 @@
   <meta name="twitter:card" content="summary_large_image">
   <meta name="twitter:title" content="CHARGED">
   <meta name="twitter:description" content="Where fintech meets the electric road across Africa.">
-  <link rel="icon" href="assets/images/favicon.svg" type="image/svg+xml">
   <link rel="apple-touch-icon" href="assets/images/favicon.svg">
-  <link rel="stylesheet" href="assets/css/charged.css">
-  <meta name="theme-color" content="#f2ede4" media="(prefers-color-scheme: light)">
-  <meta name="theme-color" content="#080810" media="(prefers-color-scheme: dark)">
-</head>
-<body>
-  <a class="ch-skip" href="#main">Skip to content</a>
+HTML;
 
-  <div class="ch-page">
-    <header class="ch-header" id="top">
-      <div class="ch-container ch-header__inner">
-        <a class="ch-logo" href="index.php" aria-label="CHARGED home">
-          <span class="ch-logo__mark" aria-hidden="true">
-            <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
-              <path d="M13 2L6 14h5l-2 10 10-16h-6l0-6z" fill="currentColor"/>
-            </svg>
-          </span>
-          <span class="ch-logo__text">CHARGED</span>
-        </a>
+require_once __DIR__ . '/includes/header.php';
+?>
 
-        <nav class="ch-nav" aria-label="Primary">
-          <a href="index.php" aria-current="page">Home</a>
-          <a href="articles.php">Articles</a>
-          <a href="archive.html">Archive</a>
-          <a href="about.html">About</a>
-          <a href="advertise.html">Advertise</a>
-          <a href="privacy.html">Privacy</a>
-        </nav>
-
-        <div class="ch-header__actions">
-          <button type="button" class="ch-icon-btn" id="theme-toggle" aria-label="Switch color theme">
-            <svg class="ch-theme-icon ch-theme-icon--sun" width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
-              <circle cx="12" cy="12" r="4" stroke="currentColor" stroke-width="2"/>
-              <path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M4.93 19.07l1.41-1.41M17.66 6.34l1.41-1.41" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
-            </svg>
-            <svg class="ch-theme-icon ch-theme-icon--moon" width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
-              <path d="M21 12.79A9 9 0 1111.21 3 7 7 0 0021 12.79z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-            </svg>
-          </button>
-          <a class="ch-btn ch-btn--primary ch-hide-mobile" href="#subscribe">Subscribe</a>
-          <button type="button" class="ch-nav-toggle" id="nav-toggle" aria-expanded="false" aria-controls="mobile-nav" aria-label="Open menu">
-            <span></span><span></span><span></span>
-          </button>
-        </div>
-      </div>
-      <div class="ch-mobile-nav" id="mobile-nav" aria-hidden="true">
-        <ul>
-          <li><a href="index.php">Home</a></li>
-          <li><a href="articles.php">Articles</a></li>
-          <li><a href="archive.html">Archive</a></li>
-          <li><a href="about.html">About</a></li>
-          <li><a href="advertise.html">Advertise</a></li>
-          <li><a href="privacy.html">Privacy</a></li>
-          <li><a href="#subscribe">Subscribe</a></li>
-        </ul>
-      </div>
-    </header>
-
-    <main class="ch-main" id="main">
       <section class="ch-hero" aria-labelledby="hero-heading">
         <div class="ch-hero__mesh" aria-hidden="true"></div>
         <div class="ch-hero__glow" aria-hidden="true"></div>
@@ -196,11 +159,48 @@
             </div>
           </article>
           <p class="ch-archive-more"><a href="archive.html">View all issues in the archive</a></p>
-          <p class="ch-archive-more"><a href="articles.php">Latest articles from the desk</a></p>
         </div>
       </section>
 
-      <section class="ch-section ch-section--surface" aria-labelledby="coverage-heading">
+      <section class="ch-section ch-section--surface" aria-labelledby="latest-articles-heading">
+        <div class="ch-container">
+          <header class="ch-section-head">
+            <span class="ch-eyebrow">From the desk</span>
+            <h2 id="latest-articles-heading" class="ch-section-title">Latest articles</h2>
+            <p class="ch-section-dek">New publishings on the site. <a href="articles.php">Browse all articles</a>.</p>
+          </header>
+          <?php if ($latestArticles === []) : ?>
+          <p class="ch-section-dek">Editorial is being updated—posts will appear here when published.</p>
+          <?php else : ?>
+          <div class="ch-card-grid ch-card-grid--3">
+            <?php foreach ($latestArticles as $a) : ?>
+            <article class="ch-card ch-card--issue">
+              <?php if (!empty($a['featured_image'])) : ?>
+              <div class="ch-card__visual" style="min-height:140px;background-size:cover;background-position:center;background-image:url(<?php echo charged_e($a['featured_image']); ?>);" role="img" aria-label=""></div>
+              <?php else : ?>
+              <div class="ch-card__visual" style="min-height:140px;background:var(--ch-surface-2);" aria-hidden="true"></div>
+              <?php endif; ?>
+              <div class="ch-tag-row">
+                <span class="ch-badge">Article</span>
+              </div>
+              <h3 class="ch-card__title"><a href="article.php?slug=<?php echo charged_e($a['slug']); ?>"><?php echo charged_e($a['title']); ?></a></h3>
+              <?php if (!empty($a['excerpt'])) : ?>
+              <p class="ch-card__excerpt"><?php echo charged_e($a['excerpt']); ?></p>
+              <?php endif; ?>
+              <div class="ch-card__meta">
+                <?php if (!empty($a['published_at'])) : ?>
+                <time datetime="<?php echo charged_e(charged_format_date_iso($a['published_at'])); ?>"><?php echo charged_e(charged_format_date($a['published_at'])); ?></time>
+                <?php endif; ?>
+                <a class="ch-btn ch-btn--primary" href="article.php?slug=<?php echo charged_e($a['slug']); ?>">Read more</a>
+              </div>
+            </article>
+            <?php endforeach; ?>
+          </div>
+          <?php endif; ?>
+        </div>
+      </section>
+
+      <section class="ch-section" aria-labelledby="coverage-heading">
         <div class="ch-container">
           <header class="ch-section-head ch-section-head--center">
             <span class="ch-eyebrow">Coverage</span>
@@ -263,56 +263,5 @@
           <a class="ch-btn ch-btn--primary" href="#subscribe">Subscribe</a>
         </div>
       </section>
-    </main>
 
-    <footer class="ch-footer">
-      <div class="ch-container ch-footer__grid">
-        <div class="ch-footer__brand">
-          <a class="ch-logo ch-logo--footer" href="index.php">
-            <span class="ch-logo__mark ch-logo__mark--footer" aria-hidden="true">
-              <svg viewBox="0 0 24 24" width="22" height="22" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
-                <path d="M13 2L6 14h5l-2 10 10-16h-6l0-6z" fill="currentColor"/>
-              </svg>
-            </span>
-            <span class="ch-logo__text">CHARGED</span>
-          </a>
-          <p>African fintech and e-mobility intelligence. Edited from Dar es Salaam.</p>
-        </div>
-        <div>
-          <h2 class="ch-footer__title">Navigate</h2>
-          <ul class="ch-footer__list">
-            <li><a href="index.php">Home</a></li>
-            <li><a href="articles.php">Articles</a></li>
-            <li><a href="archive.html">Archive</a></li>
-            <li><a href="about.html">About</a></li>
-            <li><a href="advertise.html">Advertise</a></li>
-          </ul>
-        </div>
-        <div>
-          <h2 class="ch-footer__title">Legal</h2>
-          <ul class="ch-footer__list">
-            <li><a href="privacy.html">Privacy</a></li>
-            <li><a href="admin/login.php">Admin login</a></li>
-          </ul>
-        </div>
-        <div>
-          <h2 class="ch-footer__title">Contact</h2>
-          <ul class="ch-footer__list">
-            <li><span class="ch-footer__location">Dar es Salaam, Tanzania</span></li>
-            <li><span class="ch-footer__hint">Newsletter &amp; partner: use the forms on this site.</span></li>
-          </ul>
-        </div>
-      </div>
-      <div class="ch-container ch-footer__bottom">
-        <p>© <span id="y"></span> CHARGED. All rights reserved.</p>
-      </div>
-    </footer>
-  </div>
-
-  <script>
-    document.getElementById("y").textContent = new Date().getFullYear();
-  </script>
-  <script src="assets/js/charged-path.js" defer></script>
-  <script src="assets/js/main.js" defer></script>
-</body>
-</html>
+<?php require_once __DIR__ . '/includes/footer.php'; ?>

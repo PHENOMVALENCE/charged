@@ -104,16 +104,104 @@
     }
   }
 
+  /**
+   * Absolute URL to submit-form.php. Prefer CHARGED_SUBMIT_FORM from PHP or charged-path.js.
+   */
+  function getChargedSubmitUrl() {
+    var configured = typeof window.CHARGED_SUBMIT_FORM === "string" ? window.CHARGED_SUBMIT_FORM : "";
+    if (configured.charAt(0) === "/") {
+      return window.location.origin + configured;
+    }
+    try {
+      var u = new URL(window.location.href);
+      var path = u.pathname || "/";
+      var dir;
+      if (path.endsWith("/")) {
+        dir = path;
+      } else {
+        var lastSeg = path.split("/").pop() || "";
+        if (/\.[a-z0-9]+$/i.test(lastSeg)) {
+          dir = path.replace(/[^/]*$/, "");
+        } else {
+          dir = path + "/";
+        }
+      }
+      u.pathname = dir + "submit-form.php";
+      return u.href;
+    } catch (err) {
+      return "submit-form.php";
+    }
+  }
+
+  function isChargedFormHttpOrigin() {
+    var p = window.location.protocol;
+    return p === "http:" || p === "https:";
+  }
+
+  var chargedFormCsrf = null;
+  function fetchChargedFormCsrf() {
+    if (chargedFormCsrf) return Promise.resolve(chargedFormCsrf);
+    return fetch(getChargedSubmitUrl() + "?action=csrf", {
+      credentials: "same-origin",
+      cache: "no-store",
+    })
+      .then(function (res) {
+        if (!res.ok) throw new Error("csrf");
+        return res.json();
+      })
+      .then(function (data) {
+        if (!data || !data.ok || !data.token) throw new Error("csrf");
+        chargedFormCsrf = data.token;
+        return chargedFormCsrf;
+      });
+  }
+
+  function postChargedSiteForm(payload) {
+    return fetchChargedFormCsrf().then(function (token) {
+      payload._csrf = token;
+      return fetch(getChargedSubmitUrl(), {
+        method: "POST",
+        credentials: "same-origin",
+        cache: "no-store",
+        headers: {
+          "Content-Type": "application/json",
+          Accept: "application/json",
+        },
+        body: JSON.stringify(payload),
+      }).then(function (res) {
+        return res.text().then(function (text) {
+          var body = {};
+          try {
+            body = text ? JSON.parse(text) : {};
+          } catch (ignore) {
+            body = { ok: false, error: "Server error." };
+          }
+          return { httpOk: res.ok, status: res.status, body: body };
+        });
+      });
+    });
+  }
+
   function handleSubscribeSubmit(form, e) {
     e.preventDefault();
     var emailInput = form.querySelector('input[type="email"]');
     var submitBtn = form.querySelector('button[type="submit"]');
     var statusEl = form.querySelector(".ch-form-status");
+    var honeypot = form.querySelector('input[name="website"]');
     var email = emailInput ? emailInput.value.trim() : "";
 
     if (statusEl) {
       statusEl.classList.remove("is-success", "is-error");
       statusEl.textContent = "";
+    }
+
+    if (!isChargedFormHttpOrigin()) {
+      if (statusEl) {
+        statusEl.textContent =
+          "Open this site through your web server (for example http://localhost/charged/) so the form can save.";
+        statusEl.classList.add("is-error");
+      }
+      return;
     }
 
     if (!emailInput) return;
@@ -129,18 +217,39 @@
       return;
     }
 
-    /*
-     * Integration hook: POST to your newsletter provider or API, then update
-     * statusEl based on the response.
-     */
-    if (statusEl) {
-      statusEl.textContent = "You’re on the list. Watch your inbox for the next issue.";
-      statusEl.classList.add("is-success");
-    }
-
-    emailInput.disabled = true;
     if (submitBtn) submitBtn.disabled = true;
-    form.classList.add("is-submitted");
+
+    postChargedSiteForm({
+      form_type: "subscribe",
+      email: email,
+      website: honeypot ? honeypot.value : "",
+      source_page: window.location.href,
+    })
+      .then(function (res) {
+        if (res.body && res.body.ok) {
+          chargedFormCsrf = null;
+          if (statusEl) {
+            statusEl.textContent = res.body.message || "You’re on the list. Watch your inbox for the next issue.";
+            statusEl.classList.add("is-success");
+          }
+          emailInput.disabled = true;
+          form.classList.add("is-submitted");
+        } else {
+          var msg = (res.body && res.body.error) || "Something went wrong. Please try again.";
+          if (statusEl) {
+            statusEl.textContent = msg;
+            statusEl.classList.add("is-error");
+          }
+          if (submitBtn) submitBtn.disabled = false;
+        }
+      })
+      .catch(function () {
+        if (statusEl) {
+          statusEl.textContent = "Network error. Check your connection and try again.";
+          statusEl.classList.add("is-error");
+        }
+        if (submitBtn) submitBtn.disabled = false;
+      });
   }
 
   function initSubscribeForms() {
@@ -154,6 +263,104 @@
           setFieldError(emailInput, "");
         });
       }
+    });
+  }
+
+  function initPartnerForm() {
+    var form = document.getElementById("partner-form");
+    if (!form) return;
+
+    var nameEl = document.getElementById("co-name");
+    var emailEl = document.getElementById("co-email");
+    var msgEl = document.getElementById("co-msg");
+    var honeypot = form.querySelector('input[name="website"]');
+    var submitBtn = form.querySelector('button[type="submit"]');
+    var statusEl = form.querySelector(".ch-form-status");
+
+    [nameEl, emailEl, msgEl].forEach(function (el) {
+      if (!el) return;
+      el.addEventListener("input", function () {
+        setFieldError(el, "");
+        if (statusEl) {
+          statusEl.textContent = "";
+          statusEl.classList.remove("is-success", "is-error");
+        }
+      });
+    });
+
+    form.addEventListener("submit", function (e) {
+      e.preventDefault();
+      if (!emailEl || !msgEl) return;
+
+      if (statusEl) {
+        statusEl.classList.remove("is-success", "is-error");
+        statusEl.textContent = "";
+      }
+      if (!isChargedFormHttpOrigin()) {
+        if (statusEl) {
+          statusEl.textContent =
+            "Open this site through your web server (for example http://localhost/charged/) so the form can save.";
+          statusEl.classList.add("is-error");
+        }
+        return;
+      }
+      setFieldError(emailEl, "");
+      setFieldError(msgEl, "");
+
+      var name = nameEl ? nameEl.value.trim() : "";
+      var email = emailEl.value.trim();
+      var message = msgEl.value.trim();
+
+      if (!email) {
+        setFieldError(emailEl, "Enter your work email.");
+        return;
+      }
+      if (!EMAIL_RE.test(email)) {
+        setFieldError(emailEl, "Use a valid email format.");
+        return;
+      }
+      if (message.length < 10) {
+        setFieldError(msgEl, "Please write at least 10 characters so we can help.");
+        return;
+      }
+
+      if (submitBtn) submitBtn.disabled = true;
+
+      postChargedSiteForm({
+        form_type: "partner",
+        name: name,
+        email: email,
+        message: message,
+        website: honeypot ? honeypot.value : "",
+        source_page: window.location.href,
+      })
+        .then(function (res) {
+          if (res.body && res.body.ok) {
+            chargedFormCsrf = null;
+            if (statusEl) {
+              statusEl.textContent = res.body.message || "Thanks — we received your inquiry.";
+              statusEl.classList.add("is-success");
+            }
+            form.classList.add("is-submitted");
+            if (nameEl) nameEl.disabled = true;
+            emailEl.disabled = true;
+            msgEl.disabled = true;
+          } else {
+            var msg = (res.body && res.body.error) || "Could not send. Please try again in a moment.";
+            if (statusEl) {
+              statusEl.textContent = msg;
+              statusEl.classList.add("is-error");
+            }
+            if (submitBtn) submitBtn.disabled = false;
+          }
+        })
+        .catch(function () {
+          if (statusEl) {
+            statusEl.textContent = "Network error. Check your connection and try again.";
+            statusEl.classList.add("is-error");
+          }
+          if (submitBtn) submitBtn.disabled = false;
+        });
     });
   }
 
@@ -184,6 +391,7 @@
     initMobileNav();
     initSmoothScroll();
     initSubscribeForms();
+    initPartnerForm();
     initArchiveFilter();
   }
 

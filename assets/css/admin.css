@@ -1,0 +1,553 @@
+/* Admin UI — extends CHARGED tokens from charged.css */
+
+.ch-nav--admin {
+  flex-wrap: wrap;
+  gap: 0.25rem 1rem;
+}
+
+/* ----- Distinct admin entry: newsletter (gold) vs form inbox (slate) ----- */
+.ch-admin-nav-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.35rem;
+  padding: 0.4rem 0.85rem;
+  border-radius: 6px;
+  font-size: 0.7rem;
+  font-weight: 700;
+  letter-spacing: 0.07em;
+  text-transform: uppercase;
+  text-decoration: none;
+  border: 1px solid transparent;
+  transition:
+    background 0.15s ease,
+    border-color 0.15s ease,
+    color 0.15s ease,
+    box-shadow 0.15s ease;
+}
+
+.ch-admin-nav-btn--compact {
+  padding: 0.35rem 0.65rem;
+  font-size: 0.65rem;
+}
+
+/* Dark admin header (.ch-nav--admin) */
+.ch-nav--admin .ch-admin-nav-btn--newsletter {
+  color: #f0ebe3;
+  background: rgba(217, 140, 0, 0.12);
+  border-color: rgba(217, 140, 0, 0.45);
+}
+
+.ch-nav--admin .ch-admin-nav-btn--newsletter:hover {
+  background: rgba(217, 140, 0, 0.2);
+  border-color: var(--ch-accent-bright);
+}
+
+.ch-nav--admin .ch-admin-nav-btn--newsletter.is-active {
+  color: #141218;
+  background: var(--ch-accent-bright);
+  border-color: var(--ch-accent-bright);
+  box-shadow: 0 4px 14px var(--ch-accent-glow);
+}
+
+.ch-nav--admin .ch-admin-nav-btn--forms {
+  color: #e4e0ec;
+  background: rgba(255, 255, 255, 0.05);
+  border-color: rgba(255, 255, 255, 0.2);
+}
+
+.ch-nav--admin .ch-admin-nav-btn--forms:hover {
+  background: rgba(255, 255, 255, 0.1);
+  border-color: rgba(255, 255, 255, 0.32);
+}
+
+.ch-nav--admin .ch-admin-nav-btn--forms.is-active {
+  color: #f6f3ec;
+  background: linear-gradient(160deg, #2a2a38 0%, #1e1e2a 100%);
+  border-color: rgba(255, 255, 255, 0.14);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.06);
+}
+
+/* Light page toolbar (.ch-admin-subnav on dashboard paper) */
+.ch-admin-subnav .ch-admin-nav-btn--neutral,
+.ch-admin-wrap .ch-admin-nav-btn--neutral {
+  color: var(--ch-ink-muted);
+  background: var(--ch-surface);
+  border-color: var(--ch-border);
+}
+
+.ch-admin-subnav .ch-admin-nav-btn--neutral:hover,
+.ch-admin-wrap .ch-admin-nav-btn--neutral:hover {
+  border-color: var(--ch-border-strong);
+  color: var(--ch-ink);
+}
+
+.ch-admin-subnav .ch-admin-nav-btn--neutral.is-active,
+.ch-admin-wrap .ch-admin-nav-btn--neutral.is-active {
+  color: var(--ch-ink);
+  background: var(--ch-surface-2);
+  border-color: var(--ch-border-strong);
+  font-weight: 700;
+}
+
+.ch-admin-subnav .ch-admin-nav-btn--newsletter,
+.ch-admin-wrap .ch-admin-nav-btn--newsletter {
+  color: var(--ch-ink);
+  background: var(--ch-accent-dim);
+  border-color: var(--ch-accent);
+}
+
+.ch-admin-subnav .ch-admin-nav-btn--newsletter:hover,
+.ch-admin-wrap .ch-admin-nav-btn--newsletter:hover {
+  border-color: var(--ch-accent-bright);
+}
+
+.ch-admin-subnav .ch-admin-nav-btn--newsletter.is-active,
+.ch-admin-wrap .ch-admin-nav-btn--newsletter.is-active {
+  color: #141218;
+  background: var(--ch-accent-bright);
+  border-color: var(--ch-accent-bright);
+}
+
+.ch-admin-subnav .ch-admin-nav-btn--forms,
+.ch-admin-wrap .ch-admin-nav-btn--forms {
+  color: var(--ch-ink);
+  background: var(--ch-surface);
+  border-color: #2c2c3a;
+}
+
+.ch-admin-subnav .ch-admin-nav-btn--forms:hover,
+.ch-admin-wrap .ch-admin-nav-btn--forms:hover {
+  background: #f0f0f4;
+  border-color: #1a1a24;
+}
+
+.ch-admin-subnav .ch-admin-nav-btn--forms.is-active,
+.ch-admin-wrap .ch-admin-nav-btn--forms.is-active {
+  color: #faf8f4;
+  background: linear-gradient(165deg, #2a2a36 0%, #16161f 100%);
+  border-color: #1a1a22;
+}
+
+/* Mobile drawer: match pill treatment */
+.ch-mobile-nav a.ch-admin-nav-btn {
+  margin: 0.35rem clamp(1rem, 4vw, 2rem);
+  padding: 0.55rem 1rem;
+  border-radius: 6px;
+  text-align: center;
+  border: 1px solid transparent;
+  letter-spacing: 0.06em;
+}
+
+.ch-mobile-nav a.ch-admin-nav-btn--newsletter {
+  color: #f5f1e8;
+  background: rgba(217, 140, 0, 0.15);
+  border-color: rgba(217, 140, 0, 0.45);
+}
+
+.ch-mobile-nav a.ch-admin-nav-btn--newsletter.is-active {
+  color: #141218;
+  background: var(--ch-accent-bright);
+  border-color: var(--ch-accent-bright);
+}
+
+.ch-mobile-nav a.ch-admin-nav-btn--forms {
+  color: #e8e4ef;
+  background: rgba(255, 255, 255, 0.06);
+  border-color: rgba(255, 255, 255, 0.2);
+}
+
+.ch-mobile-nav a.ch-admin-nav-btn--forms.is-active {
+  color: #faf8f4;
+  background: #2a2a38;
+  border-color: rgba(255, 255, 255, 0.2);
+}
+
+.ch-admin-wrap {
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 1.5rem 1rem 3rem;
+}
+
+.ch-admin-head {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 1rem;
+  margin-bottom: 1.5rem;
+}
+
+.ch-admin-head h1 {
+  margin: 0;
+  font-size: clamp(1.5rem, 3vw, 2rem);
+}
+
+.ch-alert {
+  padding: 0.85rem 1rem;
+  border-radius: var(--ch-radius);
+  margin-bottom: 1rem;
+  font-size: 0.95rem;
+}
+
+.ch-alert--error {
+  background: var(--ch-accent-dim);
+  border: 1px solid var(--ch-border-strong);
+  color: var(--ch-ink);
+}
+
+.ch-alert--success {
+  background: var(--ch-secondary-dim);
+  border: 1px solid var(--ch-border);
+  color: var(--ch-ink);
+}
+
+.ch-admin-stats {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+  gap: 1rem;
+  margin-bottom: 2rem;
+}
+
+.ch-admin-stat {
+  background: var(--ch-surface);
+  border: 1px solid var(--ch-border);
+  border-radius: var(--ch-radius);
+  padding: 1rem 1.15rem;
+  box-shadow: var(--ch-shadow);
+}
+
+.ch-admin-stat__value {
+  font-family: var(--font-display);
+  font-size: 1.75rem;
+  font-weight: 600;
+  color: var(--ch-accent-bright);
+}
+
+.ch-admin-stat__label {
+  font-size: 0.85rem;
+  color: var(--ch-ink-muted);
+  margin-top: 0.25rem;
+}
+
+.ch-admin-table-wrap {
+  overflow-x: auto;
+  border: 1px solid var(--ch-border);
+  border-radius: var(--ch-radius);
+  background: var(--ch-surface);
+}
+
+.ch-admin-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.9rem;
+}
+
+.ch-admin-table th,
+.ch-admin-table td {
+  padding: 0.65rem 0.85rem;
+  text-align: left;
+  border-bottom: 1px solid var(--ch-border);
+}
+
+.ch-admin-table th {
+  font-weight: 600;
+  background: var(--ch-surface-2);
+  color: var(--ch-ink-muted);
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.ch-admin-table tr:last-child td {
+  border-bottom: none;
+}
+
+.ch-admin-table a {
+  color: var(--ch-accent);
+}
+
+.ch-badge--draft {
+  background: var(--ch-surface-2);
+  color: var(--ch-ink-muted);
+}
+
+.ch-badge--published {
+  background: var(--ch-accent-dim);
+  color: var(--ch-ink);
+}
+
+.ch-admin-form {
+  max-width: 42rem;
+}
+
+.ch-admin-form--wide {
+  max-width: min(52rem, 100%);
+}
+
+.ch-admin-form .ch-field {
+  margin-bottom: 1.15rem;
+}
+
+.ch-admin-form textarea.ch-input {
+  min-height: 140px;
+  resize: vertical;
+}
+
+.ch-admin-form textarea.ch-input--lg {
+  min-height: 280px;
+}
+
+.ch-admin-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+  align-items: center;
+  margin-top: 1.25rem;
+}
+
+/* ----- Admin sign-in page ----- */
+.ch-page--admin-login {
+  position: relative;
+  background: var(--ch-bg);
+}
+
+.ch-page--admin-login .ch-footer {
+  margin-top: auto;
+  padding-block: 2rem 1.5rem;
+}
+
+/* Login top bar: always dark “console” strip (independent of site light/dark body). */
+.ch-header--login {
+  --ch-login-bar-ink: #f2ede4;
+  --ch-login-bar-muted: rgba(242, 237, 228, 0.72);
+  background: linear-gradient(118deg, #080810 0%, #12121c 42%, #141410 100%);
+  color: var(--ch-login-bar-ink);
+  border-bottom: 1px solid rgba(217, 140, 0, 0.28);
+}
+
+.ch-header__inner--login {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem 1.25rem;
+}
+
+.ch-header__inner--login .ch-logo,
+.ch-header__inner--login .ch-logo__text {
+  color: var(--ch-login-bar-ink);
+}
+
+.ch-header__inner--login .ch-logo__mark {
+  color: var(--ch-accent-bright);
+}
+
+.ch-header__login-dek {
+  flex: 1 1 200px;
+  margin: 0;
+  min-width: 0;
+  max-width: 26rem;
+  font-size: 0.9rem;
+  line-height: 1.45;
+  color: var(--ch-login-bar-muted);
+}
+
+.ch-header__login-dek .ch-eyebrow {
+  display: block;
+  margin-bottom: 0.35rem;
+  color: var(--ch-accent-bright);
+}
+
+.ch-header__inner--login .ch-icon-btn {
+  color: var(--ch-login-bar-ink);
+  border-color: rgba(255, 255, 255, 0.12);
+}
+
+.ch-header__inner--login .ch-icon-btn:hover {
+  color: var(--ch-accent-bright);
+  border-color: rgba(217, 140, 0, 0.35);
+}
+
+.ch-header__back-site {
+  font-size: 0.875rem;
+  padding: 0.55rem 1rem;
+  color: var(--ch-login-bar-ink) !important;
+  border-color: rgba(224, 172, 82, 0.45) !important;
+  background: rgba(255, 255, 255, 0.05);
+}
+
+.ch-header__back-site:hover {
+  color: var(--ch-accent-bright) !important;
+  border-color: var(--ch-accent-bright) !important;
+}
+
+.ch-main--admin-login {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: clamp(1.5rem, 5vw, 3rem) 1rem;
+  position: relative;
+}
+
+.ch-admin-login {
+  position: relative;
+  width: 100%;
+  max-width: 28rem;
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+}
+
+.ch-admin-login__mesh {
+  position: absolute;
+  inset: -20% -40% -30%;
+  background:
+    radial-gradient(ellipse 70% 50% at 20% 20%, var(--ch-accent-dim), transparent 55%),
+    radial-gradient(ellipse 50% 40% at 90% 80%, var(--ch-secondary-dim), transparent 50%);
+  opacity: 0.85;
+  pointer-events: none;
+  z-index: 0;
+}
+
+.ch-admin-login__glow {
+  position: absolute;
+  width: min(120vw, 32rem);
+  height: min(120vw, 32rem);
+  left: 50%;
+  top: 40%;
+  transform: translate(-50%, -50%);
+  background: radial-gradient(circle, var(--ch-accent-glow) 0%, transparent 68%);
+  opacity: 0.35;
+  pointer-events: none;
+  z-index: 0;
+}
+
+.ch-admin-login__card {
+  position: relative;
+  z-index: 1;
+  width: 100%;
+  background: var(--ch-surface);
+  border: 1px solid var(--ch-border);
+  border-radius: var(--ch-radius);
+  padding: clamp(1.75rem, 4vw, 2.35rem);
+  box-shadow: var(--ch-shadow-hover);
+  border-top: 3px solid var(--ch-accent-bright);
+}
+
+.ch-admin-login__head {
+  display: flex;
+  gap: 1.1rem;
+  align-items: flex-start;
+  margin-bottom: 1.5rem;
+}
+
+.ch-admin-login__mark {
+  flex-shrink: 0;
+  width: 3rem;
+  height: 3rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: var(--ch-radius);
+  background: var(--ch-accent-dim);
+  color: var(--ch-accent-bright);
+  border: 1px solid var(--ch-border-strong);
+}
+
+.ch-admin-login__eyebrow {
+  font-family: var(--font-mono);
+  font-size: 0.6875rem;
+  font-weight: 600;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--ch-accent);
+  margin: 0 0 0.35rem;
+}
+
+.ch-admin-login__title {
+  font-family: var(--font-display);
+  font-size: clamp(1.5rem, 4vw, 1.85rem);
+  font-weight: 600;
+  line-height: 1.15;
+  margin: 0 0 0.5rem;
+  color: var(--ch-ink);
+}
+
+.ch-admin-login__dek {
+  margin: 0;
+  font-size: 0.95rem;
+  line-height: 1.5;
+  color: var(--ch-ink-muted);
+}
+
+.ch-admin-login__alert {
+  margin-bottom: 1.25rem;
+}
+
+.ch-admin-login__form .ch-field {
+  margin-bottom: 1.2rem;
+}
+
+.ch-admin-login__form .ch-label {
+  font-weight: 600;
+  font-size: 0.8125rem;
+  letter-spacing: 0.02em;
+}
+
+.ch-input--login {
+  font-size: 1rem;
+  padding: 0.75rem 0.9rem;
+}
+
+.ch-admin-login__submit {
+  width: 100%;
+  margin-top: 0.25rem;
+  padding: 0.85rem 1.25rem;
+  font-weight: 600;
+  font-size: 1rem;
+  letter-spacing: 0.02em;
+}
+
+.ch-admin-login__fineprint {
+  margin: 1.35rem 0 0;
+  font-size: 0.75rem;
+  line-height: 1.45;
+  color: var(--ch-ink-subtle);
+  text-align: center;
+}
+
+.ch-admin-thumb {
+  max-width: 120px;
+  border-radius: var(--ch-radius);
+  border: 1px solid var(--ch-border);
+  margin-top: 0.5rem;
+}
+
+.ch-admin-inline {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+/* Rich text editor (TinyMCE) */
+.ch-field--editor {
+  margin-bottom: 1.35rem;
+}
+
+.ch-input--wysiwyg {
+  min-height: 280px;
+  font-family: var(--font-mono);
+  font-size: 0.8125rem;
+  line-height: 1.45;
+}
+
+.ch-field--editor .tox-tinymce {
+  border-radius: var(--ch-radius) !important;
+  border-color: var(--ch-border) !important;
+}
+
+.ch-field--editor .tox .tox-edit-area__iframe {
+  background-color: var(--ch-surface) !important;
+}
