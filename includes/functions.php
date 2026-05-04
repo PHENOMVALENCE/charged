@@ -512,22 +512,125 @@ function charged_site_form_submission_save(
     return $st->execute([$formType, $email, $name, $message, $sourcePage, $ip !== '' ? $ip : null, $ua !== '' ? $ua : null]);
 }
 
+/** Max bytes per article image (bytes are stored as uploaded; no recompression). */
+const CHARGED_ARTICLE_IMAGE_MAX_BYTES = 20971520;
+
+/** Max gallery images per article (in addition to optional featured image). */
+const CHARGED_ARTICLE_GALLERY_MAX_IMAGES = 24;
+
 /**
- * Validate and move uploaded featured image. Returns relative web path or null on skip/failure.
- * Sets $errorMessage by reference on failure.
+ * Normalize a multi-file input into a list of single-file arrays.
+ *
+ * @return list<array{name: string, type: string, tmp_name: string, error: int, size: int}>
  */
-function charged_handle_featured_upload(array $file, ?string $previousPath, ?string &$errorMessage): ?string
+function charged_upload_field_files(string $fieldName): array
+{
+    if (!isset($_FILES[$fieldName])) {
+        return [];
+    }
+    $f = $_FILES[$fieldName];
+    if (!is_array($f['name'] ?? null)) {
+        return [$f];
+    }
+    $out = [];
+    $n = count($f['name']);
+    for ($i = 0; $i < $n; $i++) {
+        $out[] = [
+            'name' => (string) ($f['name'][$i] ?? ''),
+            'type' => (string) ($f['type'][$i] ?? ''),
+            'tmp_name' => (string) ($f['tmp_name'][$i] ?? ''),
+            'error' => (int) ($f['error'][$i] ?? UPLOAD_ERR_NO_FILE),
+            'size' => (int) ($f['size'][$i] ?? 0),
+        ];
+    }
+
+    return $out;
+}
+
+/**
+ * Count selected files (excluding empty slots) for a multi-file field.
+ */
+function charged_upload_field_nonempty_count(string $fieldName): int
+{
+    $n = 0;
+    foreach (charged_upload_field_files($fieldName) as $file) {
+        if (($file['error'] ?? UPLOAD_ERR_NO_FILE) !== UPLOAD_ERR_NO_FILE) {
+            $n++;
+        }
+    }
+
+    return $n;
+}
+
+/**
+ * Decode gallery JSON from DB into a list of safe relative paths.
+ *
+ * @return list<string>
+ */
+function charged_parse_article_gallery(mixed $raw): array
+{
+    if ($raw === null || $raw === '') {
+        return [];
+    }
+    if (is_array($raw)) {
+        $data = $raw;
+    } else {
+        $decoded = json_decode((string) $raw, true);
+        $data = is_array($decoded) ? $decoded : [];
+    }
+    $out = [];
+    foreach ($data as $item) {
+        if (!is_string($item) || $item === '' || str_contains($item, '..')) {
+            continue;
+        }
+        if (str_starts_with($item, 'uploads/articles/')) {
+            $out[] = $item;
+        }
+    }
+
+    return array_values(array_unique($out));
+}
+
+/**
+ * @param list<string> $paths
+ */
+function charged_article_gallery_to_json(array $paths): ?string
+{
+    $paths = array_values(array_unique(array_filter($paths, static fn ($p) => is_string($p) && $p !== '')));
+    if ($paths === []) {
+        return null;
+    }
+
+    return json_encode($paths, JSON_UNESCAPED_SLASHES);
+}
+
+function charged_unlink_managed_article_image(?string $relativePath): void
+{
+    if ($relativePath === null || $relativePath === '' || !str_starts_with($relativePath, 'uploads/articles/')
+        || str_contains($relativePath, '..')) {
+        return;
+    }
+    $full = CHARGED_ROOT . DIRECTORY_SEPARATOR . str_replace('/', DIRECTORY_SEPARATOR, $relativePath);
+    if (is_file($full)) {
+        @unlink($full);
+    }
+}
+
+/**
+ * Validate and store one uploaded image. Returns null with empty $errorMessage when no file was sent.
+ */
+function charged_process_article_image_upload(array $file, ?string &$errorMessage): ?string
 {
     $errorMessage = '';
     if (($file['error'] ?? UPLOAD_ERR_NO_FILE) === UPLOAD_ERR_NO_FILE) {
-        return $previousPath;
+        return null;
     }
     if (($file['error'] ?? UPLOAD_ERR_OK) !== UPLOAD_ERR_OK) {
         $errorMessage = 'Image upload failed. Please try again.';
         return null;
     }
-    if (($file['size'] ?? 0) > 2 * 1024 * 1024) {
-        $errorMessage = 'Image must be 2MB or smaller.';
+    if (($file['size'] ?? 0) > CHARGED_ARTICLE_IMAGE_MAX_BYTES) {
+        $errorMessage = 'Each image must be ' . (int) round(CHARGED_ARTICLE_IMAGE_MAX_BYTES / (1024 * 1024)) . 'MB or smaller.';
         return null;
     }
 
@@ -571,13 +674,27 @@ function charged_handle_featured_upload(array $file, ?string $previousPath, ?str
         return null;
     }
 
-    // Remove old file if it was inside our uploads folder
-    if ($previousPath && str_starts_with($previousPath, 'uploads/articles/')) {
-        $old = CHARGED_ROOT . DIRECTORY_SEPARATOR . str_replace('/', DIRECTORY_SEPARATOR, $previousPath);
-        if (is_file($old)) {
-            @unlink($old);
-        }
+    return 'uploads/articles/' . $basename;
+}
+
+/**
+ * Validate and move uploaded featured image. Returns relative web path or null on skip/failure.
+ * Sets $errorMessage by reference on failure.
+ */
+function charged_handle_featured_upload(array $file, ?string $previousPath, ?string &$errorMessage): ?string
+{
+    $errorMessage = '';
+    if (($file['error'] ?? UPLOAD_ERR_NO_FILE) === UPLOAD_ERR_NO_FILE) {
+        return $previousPath;
+    }
+    $path = charged_process_article_image_upload($file, $errorMessage);
+    if ($path === null || $errorMessage !== '') {
+        return null;
     }
 
-    return 'uploads/articles/' . $basename;
+    if ($previousPath && str_starts_with($previousPath, 'uploads/articles/')) {
+        charged_unlink_managed_article_image($previousPath);
+    }
+
+    return $path;
 }

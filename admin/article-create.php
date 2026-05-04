@@ -47,10 +47,42 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             }
         }
 
+        $galleryPaths = [];
+        if ($errors === []) {
+            $pendingGallery = charged_upload_field_nonempty_count('gallery_images');
+            if ($pendingGallery > CHARGED_ARTICLE_GALLERY_MAX_IMAGES) {
+                $errors[] = 'Too many gallery images at once (max ' . CHARGED_ARTICLE_GALLERY_MAX_IMAGES . ').';
+            }
+        }
+        if ($errors === []) {
+            foreach (charged_upload_field_files('gallery_images') as $gfile) {
+                if (($gfile['error'] ?? UPLOAD_ERR_NO_FILE) === UPLOAD_ERR_NO_FILE) {
+                    continue;
+                }
+                $uploadErr = '';
+                $gp = charged_process_article_image_upload($gfile, $uploadErr);
+                if ($uploadErr !== '') {
+                    foreach ($galleryPaths as $orphan) {
+                        charged_unlink_managed_article_image($orphan);
+                    }
+                    $errors[] = $uploadErr;
+                    break;
+                }
+                if ($gp !== null) {
+                    $galleryPaths[] = $gp;
+                }
+            }
+        }
+
+        $galleryJson = null;
+        if ($errors === []) {
+            $galleryJson = charged_article_gallery_to_json($galleryPaths);
+        }
+
         if ($errors === []) {
             $st = $pdo->prepare(
-                'INSERT INTO articles (title, slug, excerpt, content, featured_image, status, author_id, published_at)
-                 VALUES (?, ?, ?, ?, ?, ?, ?, ?)'
+                'INSERT INTO articles (title, slug, excerpt, content, featured_image, gallery_images, status, author_id, published_at)
+                 VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)'
             );
             $st->execute([
                 $title,
@@ -58,6 +90,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 $excerpt !== '' ? $excerpt : null,
                 $content,
                 $featuredPath,
+                $galleryJson,
                 $status,
                 (int) $_SESSION['admin_id'],
                 $publishedAt,
@@ -112,7 +145,14 @@ require_once __DIR__ . '/../includes/header.php';
     <div class="ch-field">
       <label class="ch-label" for="featured_image">Featured image</label>
       <input class="ch-input" type="file" id="featured_image" name="featured_image" accept=".jpg,.jpeg,.png,.webp,image/jpeg,image/png,image/webp">
-      <p class="ch-field-hint">JPG, PNG, or WEBP. Max 2MB.</p>
+      <div id="featured_image_preview" class="ch-admin-file-preview" hidden></div>
+      <p class="ch-field-hint">JPG, PNG, or WEBP. Up to <?php echo (int) round(CHARGED_ARTICLE_IMAGE_MAX_BYTES / (1024 * 1024)); ?>MB per file. Files are saved as uploaded (no resizing or recompression).</p>
+    </div>
+    <div class="ch-field">
+      <label class="ch-label" for="gallery_images">Gallery images</label>
+      <input class="ch-input" type="file" id="gallery_images" name="gallery_images[]" accept=".jpg,.jpeg,.png,.webp,image/jpeg,image/png,image/webp" multiple>
+      <div id="gallery_images_preview" class="ch-admin-file-preview ch-admin-file-preview--gallery" hidden></div>
+      <p class="ch-field-hint">Optional. Select multiple files (Ctrl/Cmd+click). Same types and size limit as the featured image; up to <?php echo (int) CHARGED_ARTICLE_GALLERY_MAX_IMAGES; ?> images. If large uploads fail, raise <code>upload_max_filesize</code> and <code>post_max_size</code> in PHP.</p>
     </div>
     <div class="ch-field">
       <label class="ch-label" for="status">Status</label>
@@ -134,5 +174,6 @@ require_once __DIR__ . '/../includes/header.php';
 
 <?php
 $charged_include_article_editor = true;
+$charged_include_article_image_preview = true;
 require_once __DIR__ . '/../includes/footer.php';
 ?>

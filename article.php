@@ -10,7 +10,7 @@ $article = null;
 
 if ($slug !== '') {
     $st = $pdo->prepare(
-        "SELECT title, slug, excerpt, content, featured_image, published_at
+        "SELECT title, slug, excerpt, content, featured_image, gallery_images, published_at
          FROM articles WHERE slug = ? AND status = 'published' LIMIT 1"
     );
     $st->execute([$slug]);
@@ -18,6 +18,7 @@ if ($slug !== '') {
 }
 
 if ($article) {
+    $articleGallery = charged_parse_article_gallery($article['gallery_images'] ?? null);
     $charged_page_title = $article['title'] . ' — CHARGED';
     $charged_meta_description = $article['excerpt'] ?? '';
     $charged_nav = 'articles';
@@ -82,6 +83,17 @@ require_once __DIR__ . '/includes/header.php';
         <div class="ch-article__body" id="article-body">
           <?php echo charged_render_article_body((string) $article['content']); ?>
         </div>
+        <?php if ($articleGallery !== []) : ?>
+        <div class="ch-article__gallery" role="group" aria-label="Image gallery">
+          <div class="ch-article__gallery-grid">
+            <?php foreach ($articleGallery as $gurl) : ?>
+            <a class="ch-article__gallery-link" href="<?php echo charged_e($gurl); ?>" target="_blank" rel="noopener noreferrer">
+              <img class="ch-article__gallery-img" src="<?php echo charged_e($gurl); ?>" alt="" loading="lazy" decoding="async">
+            </a>
+            <?php endforeach; ?>
+          </div>
+        </div>
+        <?php endif; ?>
         <p class="ch-article__footer-actions">
           <a class="ch-btn ch-btn--on-dark" href="articles.php">Back to articles</a>
         </p>
@@ -91,6 +103,17 @@ require_once __DIR__ . '/includes/header.php';
     <div class="ch-article__body" id="article-body">
       <?php echo charged_render_article_body((string) $article['content']); ?>
     </div>
+    <?php if ($articleGallery !== []) : ?>
+    <div class="ch-article__gallery" role="group" aria-label="Image gallery">
+      <div class="ch-article__gallery-grid">
+        <?php foreach ($articleGallery as $gurl) : ?>
+        <a class="ch-article__gallery-link" href="<?php echo charged_e($gurl); ?>" target="_blank" rel="noopener noreferrer">
+          <img class="ch-article__gallery-img" src="<?php echo charged_e($gurl); ?>" alt="" loading="lazy" decoding="async">
+        </a>
+        <?php endforeach; ?>
+      </div>
+    </div>
+    <?php endif; ?>
     <p class="ch-article__footer-actions">
       <a class="ch-btn ch-btn--on-dark" href="articles.php">Back to articles</a>
     </p>

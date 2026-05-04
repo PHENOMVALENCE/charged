@@ -63,6 +63,9 @@ $charged_admin_login_href = ($CHARGED_ADMIN || $charged_from_admin_dir) ? 'login
   <?php if (!empty($charged_include_article_editor)) : ?>
   <?php require __DIR__ . '/admin-article-editor.php'; ?>
   <?php endif; ?>
+  <?php if (!empty($charged_include_article_image_preview)) : ?>
+  <script src="<?php echo charged_e($prefix); ?>assets/js/admin-article-image-preview.js" defer></script>
+  <?php endif; ?>
   <script>window.CHARGED_SUBMIT_FORM=<?php echo json_encode(charged_submit_form_web_path(), JSON_UNESCAPED_SLASHES); ?>;</script>
   <script src="<?php echo charged_e($prefix); ?>assets/js/charged-path.js" defer></script>
   <script src="<?php echo charged_e($prefix); ?>assets/js/main.js" defer></script>

@@ -73,9 +73,45 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             }
         }
 
+        $existingGallery = charged_parse_article_gallery($article['gallery_images'] ?? null);
+        $removeRaw = $_POST['gallery_delete'] ?? [];
+        $removeRaw = is_array($removeRaw) ? $removeRaw : [];
+        $removePaths = array_values(array_intersect($existingGallery, array_map('strval', $removeRaw)));
+        $keptGallery = array_values(array_diff($existingGallery, $removePaths));
+
+        $newGalleryPaths = [];
+        if ($errors === []) {
+            $pendingNew = charged_upload_field_nonempty_count('gallery_images');
+            if ($pendingNew + count($keptGallery) > CHARGED_ARTICLE_GALLERY_MAX_IMAGES) {
+                $errors[] = 'Gallery cannot exceed ' . CHARGED_ARTICLE_GALLERY_MAX_IMAGES . ' images total. Remove some or choose fewer new files.';
+            }
+        }
+        if ($errors === []) {
+            foreach (charged_upload_field_files('gallery_images') as $gfile) {
+                if (($gfile['error'] ?? UPLOAD_ERR_NO_FILE) === UPLOAD_ERR_NO_FILE) {
+                    continue;
+                }
+                $uploadErr = '';
+                $gp = charged_process_article_image_upload($gfile, $uploadErr);
+                if ($uploadErr !== '') {
+                    foreach ($newGalleryPaths as $orphan) {
+                        charged_unlink_managed_article_image($orphan);
+                    }
+                    $errors[] = $uploadErr;
+                    break;
+                }
+                if ($gp !== null) {
+                    $newGalleryPaths[] = $gp;
+                }
+            }
+        }
+
+        $mergedGallery = array_values(array_merge($keptGallery, $newGalleryPaths));
+        $galleryJson = charged_article_gallery_to_json($mergedGallery);
+
         if ($errors === []) {
             $up = $pdo->prepare(
-                'UPDATE articles SET title = ?, slug = ?, excerpt = ?, content = ?, featured_image = ?,
+                'UPDATE articles SET title = ?, slug = ?, excerpt = ?, content = ?, featured_image = ?, gallery_images = ?,
                  status = ?, published_at = ? WHERE id = ?'
             );
             $up->execute([
@@ -84,10 +120,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 $excerpt !== '' ? $excerpt : null,
                 $content,
                 $featuredPath,
+                $galleryJson,
                 $status,
                 $publishedAt,
                 $id,
             ]);
+            foreach ($removePaths as $gone) {
+                charged_unlink_managed_article_image($gone);
+            }
             header('Location: article-edit.php?id=' . $id . '&saved=1');
             exit;
         }
@@ -105,6 +145,8 @@ if ($errors !== [] && $_SERVER['REQUEST_METHOD'] === 'POST') {
         'published_at' => $_POST['published_at'] ?? $article['published_at'],
     ]);
 }
+
+$articleGallery = charged_parse_article_gallery($article['gallery_images'] ?? null);
 
 $dtLocal = '';
 if (!empty($article['published_at'])) {
@@ -166,7 +208,25 @@ require_once __DIR__ . '/../includes/header.php';
       <img class="ch-admin-thumb" src="<?php echo charged_e('../' . $article['featured_image']); ?>" alt="">
       <?php endif; ?>
       <input class="ch-input" type="file" id="featured_image" name="featured_image" accept=".jpg,.jpeg,.png,.webp,image/jpeg,image/png,image/webp">
-      <p class="ch-field-hint">JPG, PNG, or WEBP. Max 2MB. Leave empty to keep the current image.</p>
+      <div id="featured_image_preview" class="ch-admin-file-preview" hidden></div>
+      <p class="ch-field-hint">JPG, PNG, or WEBP. Up to <?php echo (int) round(CHARGED_ARTICLE_IMAGE_MAX_BYTES / (1024 * 1024)); ?>MB. Saved as uploaded (no recompression). Leave empty to keep the current image.</p>
+    </div>
+    <div class="ch-field">
+      <label class="ch-label" for="gallery_images">Gallery images</label>
+      <?php if ($articleGallery !== []) : ?>
+      <p class="ch-field-hint">Current images — check “Remove” to delete on save:</p>
+      <ul class="ch-admin-gallery-list">
+        <?php foreach ($articleGallery as $gpath) : ?>
+        <li class="ch-admin-gallery-list__item">
+          <img class="ch-admin-gallery-list__thumb" src="<?php echo charged_e('../' . $gpath); ?>" alt="" width="96" height="96" loading="lazy" decoding="async">
+          <label class="ch-admin-gallery-list__remove"><input type="checkbox" name="gallery_delete[]" value="<?php echo charged_e($gpath); ?>"> Remove</label>
+        </li>
+        <?php endforeach; ?>
+      </ul>
+      <?php endif; ?>
+      <input class="ch-input" type="file" id="gallery_images" name="gallery_images[]" accept=".jpg,.jpeg,.png,.webp,image/jpeg,image/png,image/webp" multiple>
+      <div id="gallery_images_preview" class="ch-admin-file-preview ch-admin-file-preview--gallery" hidden></div>
+      <p class="ch-field-hint">Add more images (multiple selection). Max <?php echo (int) CHARGED_ARTICLE_GALLERY_MAX_IMAGES; ?> total including kept images. Same size limit as featured; for large originals adjust PHP <code>upload_max_filesize</code> / <code>post_max_size</code>.</p>
     </div>
     <div class="ch-field">
       <label class="ch-label" for="status">Status</label>
@@ -187,7 +247,7 @@ require_once __DIR__ . '/../includes/header.php';
   <hr style="border:0;border-top:1px solid var(--ch-border);margin:2.5rem 0 1.5rem;">
 
   <h2 class="ch-section-title" style="font-size:1.1rem;">Delete article</h2>
-  <p class="ch-section-dek">This cannot be undone. The featured image file will be removed if stored in uploads.</p>
+  <p class="ch-section-dek">This cannot be undone. Featured and gallery image files under uploads will be removed.</p>
   <form method="post" action="article-delete.php" onsubmit="return confirm('Delete this article permanently?');">
     <?php echo charged_csrf_field(); ?>
     <input type="hidden" name="id" value="<?php echo (int) $article['id']; ?>">
@@ -197,5 +257,6 @@ require_once __DIR__ . '/../includes/header.php';
 
 <?php
 $charged_include_article_editor = true;
+$charged_include_article_image_preview = true;
 require_once __DIR__ . '/../includes/footer.php';
 ?>

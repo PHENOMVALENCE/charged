@@ -33,6 +33,7 @@ CREATE TABLE articles (
   excerpt TEXT NULL,
   content LONGTEXT NOT NULL,
   featured_image VARCHAR(500) NULL DEFAULT NULL,
+  gallery_images JSON NULL DEFAULT NULL,
   status ENUM('draft', 'published') NOT NULL DEFAULT 'draft',
   author_id INT UNSIGNED NOT NULL,
   published_at DATETIME NULL DEFAULT NULL,

@@ -21,7 +21,7 @@ if ($id < 1) {
     exit;
 }
 
-$st = $pdo->prepare('SELECT featured_image FROM articles WHERE id = ? LIMIT 1');
+$st = $pdo->prepare('SELECT featured_image, gallery_images FROM articles WHERE id = ? LIMIT 1');
 $st->execute([$id]);
 $row = $st->fetch();
 if (!$row) {
@@ -29,12 +29,9 @@ if (!$row) {
     exit;
 }
 
-$img = $row['featured_image'] ?? '';
-if ($img && str_starts_with($img, 'uploads/articles/')) {
-    $path = CHARGED_ROOT . DIRECTORY_SEPARATOR . str_replace('/', DIRECTORY_SEPARATOR, $img);
-    if (is_file($path)) {
-        @unlink($path);
-    }
+charged_unlink_managed_article_image($row['featured_image'] ?? null);
+foreach (charged_parse_article_gallery($row['gallery_images'] ?? null) as $gp) {
+    charged_unlink_managed_article_image($gp);
 }
 
 $del = $pdo->prepare('DELETE FROM articles WHERE id = ?');

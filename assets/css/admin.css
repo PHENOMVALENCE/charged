@@ -525,6 +525,158 @@
   margin-top: 0.5rem;
 }
 
+.ch-admin-gallery-list {
+  list-style: none;
+  margin: 0.75rem 0 1rem;
+  padding: 0;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem;
+}
+
+.ch-admin-gallery-list__item {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 0.35rem;
+  max-width: 120px;
+}
+
+.ch-admin-gallery-list__thumb {
+  width: 96px;
+  height: 96px;
+  object-fit: cover;
+  border-radius: var(--ch-radius);
+  border: 1px solid var(--ch-border);
+}
+
+.ch-admin-gallery-list__remove {
+  font-size: 0.8125rem;
+  color: var(--ch-ink-muted);
+  cursor: pointer;
+}
+
+/* Local file selection previews (before save) */
+.ch-admin-file-preview {
+  margin: 0.75rem 0 0;
+  padding: 1rem 1.1rem;
+  max-width: 100%;
+  border-radius: var(--ch-radius);
+  border: 1px solid var(--ch-border);
+  background: linear-gradient(165deg, var(--ch-surface) 0%, var(--ch-surface-2) 100%);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.45), 0 2px 12px rgba(20, 18, 24, 0.06);
+}
+
+.ch-admin-file-preview--gallery {
+  padding-bottom: 1.15rem;
+}
+
+.ch-admin-file-preview__title {
+  margin: 0 0 0.75rem;
+  font-size: 0.7rem;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--ch-ink-muted);
+}
+
+/* Featured: fixed “viewport” so large photos don’t blow out the form */
+.ch-admin-file-preview__frame--featured {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: fit-content;
+  max-width: min(100%, 22rem);
+  max-height: 14rem;
+  min-height: 6rem;
+  padding: 0.5rem;
+  margin: 0;
+  border-radius: var(--ch-radius-sm);
+  border: 1px solid var(--ch-border);
+  background: var(--ch-surface-2);
+  box-shadow: 0 1px 3px rgba(20, 18, 24, 0.08);
+}
+
+.ch-admin-file-preview__img--featured {
+  display: block;
+  max-width: 100%;
+  max-height: 13rem;
+  width: auto;
+  height: auto;
+  object-fit: contain;
+  border-radius: calc(var(--ch-radius-sm) - 2px);
+}
+
+.ch-admin-file-preview__caption {
+  margin: 0.65rem 0 0;
+  max-width: min(100%, 22rem);
+  font-size: 0.8125rem;
+  font-weight: 500;
+  color: var(--ch-ink);
+  line-height: 1.35;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* Gallery: responsive thumbnail cards */
+.ch-admin-file-preview__grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(6.75rem, 1fr));
+  gap: 0.65rem;
+  max-width: 100%;
+}
+
+.ch-admin-file-preview__cell {
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+  min-width: 0;
+  padding: 0.45rem;
+  border-radius: var(--ch-radius-sm);
+  border: 1px solid var(--ch-border);
+  background: var(--ch-surface);
+  box-shadow: 0 1px 2px rgba(20, 18, 24, 0.06);
+  transition:
+    border-color 0.15s ease,
+    box-shadow 0.15s ease;
+}
+
+.ch-admin-file-preview__cell:hover {
+  border-color: var(--ch-border-strong);
+  box-shadow: 0 3px 10px rgba(20, 18, 24, 0.08);
+}
+
+.ch-admin-file-preview__thumb-wrap {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 1;
+  border-radius: calc(var(--ch-radius-sm) - 3px);
+  overflow: hidden;
+  background: var(--ch-surface-2);
+  border: 1px solid rgba(0, 0, 0, 0.06);
+}
+
+.ch-admin-file-preview__thumb {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.ch-admin-file-preview__name {
+  font-size: 0.65rem;
+  line-height: 1.25;
+  color: var(--ch-ink-muted);
+  text-align: center;
+  overflow: hidden;
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+  line-clamp: 2;
+  word-break: break-word;
+}
+
 .ch-admin-inline {
   display: inline-flex;
   align-items: center;
