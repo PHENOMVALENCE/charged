@@ -11,9 +11,9 @@ if (!defined('CHARGED_ROOT')) {
 }
 
 $dbHost = '127.0.0.1';
-$dbName = 'charged_articles';
-$dbUser = 'root';
-$dbPass = '';
+$dbName = 'u145584795_charged';
+$dbUser = 'u145584795_charged';
+$dbPass = 'Phenomenal@10';
 $dbCharset = 'utf8mb4';
 
 $dsn = "mysql:host={$dbHost};dbname={$dbName};charset={$dbCharset}";
